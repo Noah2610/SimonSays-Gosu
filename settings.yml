@@ -4,13 +4,14 @@ window:
     width:  640
     height: 560
 game:
-  background_color: 0xff_ffffff
-  z_index:          0
-  font_color:       0xff_cccccc
+  background_color:    0xff_ffffff
+  z_index:             0
+  font_color:          0xff_000000
+  font_gameover_color: 0xff_ffaa00
 board:
   field_padding:        16
   deactivate_interval:  30
-  play_interval:        30
+  play_interval:        60
   starting_play_length: 3
 fields:
   defaults:

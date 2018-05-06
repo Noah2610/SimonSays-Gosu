@@ -1,7 +1,6 @@
 class Field
 	def initialize args = {}
-		@font = Gosu::Font.new 24
-
+		@font     = Gosu::Font.new 24
 		@name     = args[:name]
 		@position = args[:position]
 		@settings = args[:settings]
@@ -31,7 +30,7 @@ class Field
 
 	def draw
 		draw_body
-		draw_debug
+		draw_key
 	end
 
 	def draw_body
@@ -56,11 +55,16 @@ class Field
 		return !@active
 	end
 
-	def draw_debug
-		@font.draw(
-			@name,
-			@position[:x], @position[:y],
-			100
+	def draw_key
+		position = {
+			x: (@position[:x] + (@size[:width]  * 0.5)).round,
+			y: (@position[:y] + (@size[:height] * 0.5)).round
+		}
+		@font.draw_rel(
+			@key,
+			position[:x], position[:y], 100,
+			0.5, 0.5,
+			1, 1
 		)
 	end
 end

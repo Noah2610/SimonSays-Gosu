@@ -1,12 +1,13 @@
 class Game < Gosu::Window
 	def initialize
-		@settings = SETTINGS.game
-		@size     = SETTINGS.window(:size)
-		@tick     = 0
-		@state    = :playing
-		@score    = 0
-		@running  = false
-		@font     = Gosu::Font.new 24
+		@settings      = SETTINGS.game
+		@size          = SETTINGS.window(:size)
+		@tick          = 0
+		@state         = :playing
+		@score         = 0
+		@running       = false
+		@font          = Gosu::Font.new 24
+		@font_gameover = Gosu::Font.new 64
 		super @size[:width], @size[:height]
 		self.caption = 'A Simon-Says clone'
 	end
@@ -64,9 +65,15 @@ class Game < Gosu::Window
 	end
 
 	def draw
-		draw_background
-		draw_board
-		draw_score
+		if (running?)
+			draw_background
+			draw_board
+			draw_score
+		else
+			draw_background
+			draw_board
+			draw_gameover
+		end
 	end
 
 	def draw_background
@@ -87,6 +94,31 @@ class Game < Gosu::Window
 			"Score: #{@score}",
 			16, 16, 100,
 			0, 0,
+			1, 1,
+			@settings[:font_color]
+		)
+	end
+
+	def draw_gameover
+		center = {
+			x: (@size[:width]  * 0.5).round,
+			y: (@size[:height] * 0.5).round
+		}
+		pos_score = {
+			x: center[:x],
+			y: (center[:y] + 64)
+		}
+		@font_gameover.draw_rel(
+			'Game Over',
+			center[:x], center[:y], 100,
+			0.5, 0.5,
+			1, 1,
+			@settings[:font_gameover_color]
+		)
+		@font.draw_rel(
+			"Final Score: #{@score}",
+			pos_score[:x], pos_score[:y], 100,
+			0.5, 0.5,
 			1, 1,
 			@settings[:font_color]
 		)
