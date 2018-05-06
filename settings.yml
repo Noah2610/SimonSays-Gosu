@@ -1,0 +1,33 @@
+---
+window:
+  size:
+    width:  640
+    height: 560
+game:
+  background_color:    0xff_ffffff
+  z_index:             0
+  deactivate_interval: 30
+board:
+  field_padding: 16
+fields:
+  defaults:
+    size:
+      width:  128
+      height: 128
+    z_index:  50
+    active_color:  0x44_ffffff
+  instances:
+    top_left:
+      key:   W
+      color: 0xff_ff0000
+    top_right:
+      key:   E
+      color: 0xff_00ff00
+    bottom_left:
+      key:   S
+      color: 0xff_0000ff
+    bottom_right:
+      key:   D
+      color: 0xff_ffff00
+
+...
