@@ -1,8 +1,12 @@
 class Board
 	def initialize
-		@settings        = SETTINGS.board
-		@fields          = nil
-		@fields_settings = SETTINGS.fields
+		@settings              = SETTINGS.board
+		@fields                = nil
+		@fields_settings       = SETTINGS.fields
+		@play_length           = @settings[:starting_play_length]
+		@current_playing_order = nil
+		@current_playing_index = nil
+		@recording_fields      = []
 		init_fields
 	end
 
@@ -45,17 +49,59 @@ class Board
 	end
 
 	def handle_input char
-		@fields.each do |field|
-			if (field.key? char)
-				deactivate_fields
-				field.activate!
-				break
-			end
+		field = @fields.detect do |f|
+			next f  if (f.key? char)
+		end
+		if (!!field)
+			@recording_fields << field
+			deactivate_fields
+			field.activate!
+			handle_recording_finished  if (@recording_fields.size >= @play_length)
+		end
+	end
+
+	def handle_recording_finished
+		if (@current_playing_order == @recording_fields)
+			@recording_fields = []
+			@play_length += 1
+			GAME.handle_successful_recording
+		else
+			GAME.game_over
 		end
 	end
 
 	def deactivate_fields
 		@fields.each &:deactivate!
+	end
+
+	def update
+		deactivate_fields  if (GAME.get_tick % @settings[:deactivate_interval] == 0)
+		if (GAME.playing?)
+			play_field  if (GAME.get_tick % @settings[:play_interval] == 0)
+		end
+	end
+
+	def play_field
+		start_playing  if (@current_playing_index.nil?)
+		@current_playing_order[@current_playing_index].activate!
+		@current_playing_index += 1
+		stop_playing   if (@current_playing_index == @current_playing_order.size)
+	end
+
+	def start_playing
+		@current_playing_order = get_random_playing_order
+		@current_playing_index = 0
+	end
+
+	def stop_playing
+		@current_playing_index = nil
+		GAME.set_state :recording
+	end
+
+	def get_random_playing_order
+		return @play_length.times.map do
+			next @fields.sample
+		end
 	end
 
 	def draw
